@@ -16,7 +16,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final buttonStyle = ElevatedButton.styleFrom(
       fixedSize: const Size(120, 60),
-      backgroundColor: const Color(0xff2CF3E).withOpacity(0.6),
+      backgroundColor: const Color(0x0ff2cf3e).withOpacity(0.6),
     );
 
     return Scaffold(

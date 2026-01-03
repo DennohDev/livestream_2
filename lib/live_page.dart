@@ -13,10 +13,10 @@ class LivePage extends StatefulWidget {
   final bool isHost;
 
   const LivePage({
-    Key? key,
+    super.key,
     required this.liveID,
     this.isHost = false,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => LivePageState();

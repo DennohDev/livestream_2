@@ -32,6 +32,29 @@ class LivePageState extends State<LivePage> {
     final hostConfig = ZegoUIKitPrebuiltLiveStreamingConfig.host(
       plugins: [ZegoUIKitSignalingPlugin()],
     )..audioVideoView.foregroundBuilder = hostAudioVideoViewForegroundBuilder;
+
+    final audienceConfig = ZegoUIKitPrebuiltLiveStreamingConfig.audience(
+      plugins: [ZegoUIKitSignalingPlugin()],
+    );
+    final audienceEvents = ZegoUIKitPrebuiltLiveStreamingEvents(
+      onError: (ZegoUIKitError error) {
+        debugPrint('onError:$error');
+      },
+      audioVideo: ZegoLiveStreamingAudioVideoEvents(
+        onCameraTurnOnByOthersConfirmation: (BuildContext context) {
+          return onTurnOnAudienceDevieConfirmation(
+            context,
+            isCameraOrMicrophone: true,
+          );
+        },
+        onMicrophoneTurnOnByOthersConfirmation: (BuildContext context) {
+          return onTurnOnAudienceDevieConfirmation(
+            context,
+            isCameraOrMicrophone: false,
+          );
+        },
+      ),
+    );
     return SafeArea(
       child: ZegoUIKitPrebuiltLiveStreaming(
         appID: 989560183 /*input your AppID*/,
@@ -40,11 +63,21 @@ class LivePageState extends State<LivePage> {
         userID: localUserID,
         userName: 'user_$localUserID',
         liveID: widget.liveID,
-        config:
-            (widget.isHost
-                  ? ZegoUIKitPrebuiltLiveStreamingConfig.host()
-                  : ZegoUIKitPrebuiltLiveStreamingConfig.audience())
-              ..avatarBuilder = customAvatarBuilder,
+        events: widget.isHost ? ZegoUIKitPrebuiltLiveStreamingEvents(onError: (ZegoUIKitError error){
+          debugPrint('onError:$error');
+        },) : audienceEvents,
+        config: (widget.isHost ? hostConfig : audienceConfig)..audioVideoView.useVideoViewAspectFill = true
+        /// Supporting Minimizing
+        ..topMenuBar.buttons = [
+          ZegoLiveStreamingMenuBarButtonName.minimizingButton,
+        ]
+
+        /// custom avatar
+        ..avatarBuilder = customAvatarBuilder
+
+        /// message attributes example
+        ..inRoomMessage.attributes = userLevelsAttributes
+        ..inRoomMessage.avatarLeadingBuilder = userLevelBuilder,
       ),
     );
   }
@@ -172,7 +205,14 @@ class LivePageState extends State<LivePage> {
             style: textStyle,
           ),
           actions: [
-            ElevatedButton(onPressed: onPressed, child: child)
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel', style: buttonTextStyle),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Ok', style: buttonTextStyle),
+            ),
           ],
         );
       },

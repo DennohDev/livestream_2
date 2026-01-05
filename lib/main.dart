@@ -4,18 +4,17 @@ import 'package:livestream_2/home_page.dart';
 
 // Package imports:
 import 'package:zego_uikit_prebuilt_live_streaming/zego_uikit_prebuilt_live_streaming.dart';
+  final navigatorKey = GlobalKey<NavigatorState>();
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  final navigatorKey = GlobalKey<NavigatorState>();
   ZegoUIKit().initLog().then((value) {
-    runApp(MyApp(navigatorKey: navigatorKey));
+    runApp(MyApp());
   });
 }
 
 class MyApp extends StatefulWidget {
-  final GlobalKey<NavigatorState> navigatorKey;
-  const MyApp({super.key, required this.navigatorKey});
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -27,7 +26,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'LiveStreaming',
       home: ZegoUIKitPrebuiltLiveStreamingMiniPopScope(child: HomePage()),
-      navigatorKey: widget.navigatorKey,
+      navigatorKey: navigatorKey,
       builder: (BuildContext context, Widget? child) {
         return Stack(
           children: [
@@ -35,7 +34,7 @@ class _MyAppState extends State<MyApp> {
             // support minimizing
             ZegoUIKitPrebuiltLiveStreamingMiniOverlayPage(
               contextQuery: () {
-                return widget.navigatorKey.currentState!.context;
+                return navigatorKey.currentState!.context;
               },
             ),
           ],
